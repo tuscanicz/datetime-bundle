@@ -2,8 +2,8 @@ services:
     _defaults:
         autowire: true
 
-    Kutny\DateTimeBundle\DateIntervalFactory:
+    Tuscanicz\DateTimeBundle\DateIntervalFactory:
 
-    Kutny\DateTimeBundle\DateTimeFactory:
+    Tuscanicz\DateTimeBundle\DateTimeFactory:
         arguments:
-            - '%kutny_datetime.app_timezone%'
+            - '%tuscanicz_datetime.app_timezone%'

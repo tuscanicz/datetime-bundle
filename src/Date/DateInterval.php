@@ -1,6 +1,8 @@
 <?php
 
-namespace Kutny\DateTimeBundle\Date;
+declare(strict_types=1);
+
+namespace Tuscanicz\DateTimeBundle\Date;
 
 class DateInterval
 {
@@ -13,21 +15,30 @@ class DateInterval
         $this->to = $to;
     }
 
-    public function getFrom()
+    public function getFrom(): Date
     {
         return $this->from;
     }
 
-    public function getTo()
+    public function getTo(): Date
     {
         return $this->to;
     }
 
-    public function getLengthInDays()
+    public function getLengthInDays(): int
     {
         $startPhpDateTime = $this->from->toDateTime();
         $endPhpDateTime = $this->to->toDateTime();
         $phpDateTimeDiff = $startPhpDateTime->diff($endPhpDateTime, true);
+        if ($phpDateTimeDiff === false) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Could not calculate length in days from Dates: %s and %s',
+                    $this->from->toFormat('d/m/Y'),
+                    $this->to->toFormat('d/m/Y')
+                )
+            );
+        }
 
         return $phpDateTimeDiff->days;
     }

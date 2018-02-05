@@ -1,12 +1,14 @@
 <?php
 
-namespace Kutny\DateTimeBundle;
+declare(strict_types=1);
 
-use Kutny\DateTimeBundle\Date\Date;
-use Kutny\DateTimeBundle\Time\Time;
+namespace Tuscanicz\DateTimeBundle;
+
 use DateInterval;
 use DateTime as DateTimePhp;
 use DateTimeZone;
+use Tuscanicz\DateTimeBundle\Date\Date;
+use Tuscanicz\DateTimeBundle\Time\Time;
 
 class DateTime
 {
@@ -14,14 +16,14 @@ class DateTime
     private $time;
     private $timezone;
 
-    public function __construct(Date $date, Time $time, $timezone = DateTimeFactory::TIMEZONE_GMT)
+    public function __construct(Date $date, Time $time, string $timezone = DateTimeFactory::TIMEZONE_GMT)
     {
         $this->date = $date;
         $this->time = $time;
         $this->timezone = $timezone;
     }
 
-    public function toTimestamp()
+    public function toTimestamp(): int
     {
         return $this->createDateTimePhp()->getTimestamp();
     }
@@ -36,53 +38,55 @@ class DateTime
         return $this->time;
     }
 
-    public function isSameAs(DateTime $anotherDateTime)
+    public function isSameAs(DateTime $anotherDateTime): bool
     {
         return $this->date->isSameAs($anotherDateTime->getDate()) && $this->time->isSameAs($anotherDateTime->getTime());
     }
 
-    public function toFormat($format)
+    public function toFormat(string $format): string
     {
         return $this->createDateTimePhp()->format($format);
     }
 
-    public function toDateTime()
+    public function toDateTime(): DateTimePhp
     {
         return new DateTimePhp($this->toFormat('r'));
     }
 
-    public function isBetween(DateTime $start, DateTime $end)
+    public function isBetween(DateTime $start, DateTime $end): bool
     {
         $thisDateTime = $this->toDateTime();
+
         return $thisDateTime < $end->toDateTime() ? $thisDateTime > $start->toDateTime() : false;
     }
 
-    public function addMonths($months)
+    public function addMonths(int $months): DateTime
     {
-        return $this->addIntervalBySpec('P' . $months . 'M');
+        return $this->addIntervalBySpec('P' . (string) $months . 'M');
     }
 
-    public function addDays($days)
+    public function addDays(int $days): DateTime
     {
-        return $this->addIntervalBySpec('P' . $days . 'D');
+        return $this->addIntervalBySpec('P' . (string) $days . 'D');
     }
 
-    public function addHours($hours)
+    public function addHours(int$hours): DateTime
     {
-        return $this->addIntervalBySpec('PT' . $hours . 'H');
+        return $this->addIntervalBySpec('PT' . (string) $hours . 'H');
     }
 
-    public function addMinutes($minutes)
+    public function addMinutes(int $minutes): DateTime
     {
-        return $this->addIntervalBySpec('PT' . $minutes . 'M');
+        return $this->addIntervalBySpec('PT' . (string) $minutes . 'M');
     }
 
-    public function addWorkingDays($days)
+    public function addWorkingDays(int $days): DateTime
     {
         $weekendDays = ((int)($days / 5) * 2);
+        $totalAddedDays = $days + $weekendDays;
 
         $thisDateTime = $this->toDateTime();
-        $thisDateTime->add(new DateInterval('P' . ($days + $weekendDays) . 'D'));
+        $thisDateTime->add(new DateInterval('P' . (string) $totalAddedDays . 'D'));
 
         if ($thisDateTime->format('N') < $this->toDateTime()->format('N')) {
             $thisDateTime->add(new DateInterval('P' . ((int)$this->toDateTime()->format('N') === 7 ? 1 : 2) . 'D'));
@@ -99,27 +103,27 @@ class DateTime
         return $this->fromDateTimePhp($thisDateTime);
     }
 
-    public function subMonths($months)
+    public function subMonths(int $months): DateTime
     {
-        return $this->subIntervalBySpec('P' . $months . 'M');
+        return $this->subIntervalBySpec('P' . (string) $months . 'M');
     }
 
-    public function subDays($days)
+    public function subDays(int $days): DateTime
     {
-        return $this->subIntervalBySpec('P' . $days . 'D');
+        return $this->subIntervalBySpec('P' . (string) $days . 'D');
     }
 
-    public function subHours($hours)
+    public function subHours(int $hours): DateTime
     {
-        return $this->subIntervalBySpec('PT' . $hours . 'H');
+        return $this->subIntervalBySpec('PT' . (string) $hours . 'H');
     }
 
-    public function subMinutes($minutes)
+    public function subMinutes(int $minutes): DateTime
     {
-        return $this->subIntervalBySpec('PT' . $minutes . 'M');
+        return $this->subIntervalBySpec('PT' . (string) $minutes . 'M');
     }
 
-    private function subIntervalBySpec($intervalSpec)
+    private function subIntervalBySpec(string $intervalSpec): DateTime
     {
         $thisDateTime = $this->toDateTime();
         $thisDateTime->sub(new DateInterval($intervalSpec));
@@ -127,7 +131,7 @@ class DateTime
         return $this->fromDateTimePhp($thisDateTime);
     }
 
-    private function addIntervalBySpec($intervalSpec)
+    private function addIntervalBySpec(string $intervalSpec): DateTime
     {
         $thisDateTime = $this->toDateTime();
         $thisDateTime->add(new DateInterval($intervalSpec));
@@ -135,23 +139,23 @@ class DateTime
         return $this->fromDateTimePhp($thisDateTime);
     }
 
-    private function fromDateTimePhp(DateTimePhp $dateTimePhp)
+    private function fromDateTimePhp(DateTimePhp $dateTimePhp): DateTime
     {
-        return new DateTime(
+        return new self(
             new Date(
-                $dateTimePhp->format('Y'),
-                $dateTimePhp->format('m'),
-                $dateTimePhp->format('d')
+                (int) $dateTimePhp->format('Y'),
+                (int) $dateTimePhp->format('m'),
+                (int) $dateTimePhp->format('d')
             ),
             new Time(
-                $dateTimePhp->format('H'),
-                $dateTimePhp->format('i'),
-                $dateTimePhp->format('s')
+                (int) $dateTimePhp->format('H'),
+                (int) $dateTimePhp->format('i'),
+                (int) $dateTimePhp->format('s')
             )
         );
     }
 
-    private function createDateTimePhp()
+    private function createDateTimePhp(): DateTimePhp
     {
         $timezonePhp = new DateTimeZone($this->timezone);
 

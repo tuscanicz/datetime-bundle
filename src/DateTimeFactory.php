@@ -1,12 +1,13 @@
 <?php
 
-namespace Kutny\DateTimeBundle;
+declare(strict_types=1);
 
-use Kutny\DateTimeBundle\Date\Date;
-use Kutny\DateTimeBundle\Time\Time;
+namespace Tuscanicz\DateTimeBundle;
+
 use DateTime as DateTimePhp;
 use DateTimeZone;
-use InvalidArgumentException;
+use Tuscanicz\DateTimeBundle\Date\Date;
+use Tuscanicz\DateTimeBundle\Time\Time;
 
 class DateTimeFactory
 {
@@ -14,14 +15,7 @@ class DateTimeFactory
     const FORMAT_DATE_ONLY = 'Y-m-d';
     const FORMAT_DATETIME = 'Y-m-d H:i:s';
 
-    private $appTimezone;
-
-    public function __construct($appTimezone)
-    {
-        $this->appTimezone = $appTimezone;
-    }
-
-    public function now($timezone = self::TIMEZONE_GMT)
+    public function now(string $timezone = self::TIMEZONE_GMT): DateTime
     {
         $timezonePhp = new DateTimeZone($timezone);
         $datetimePhp = new DateTimePhp('now', $timezonePhp);
@@ -29,7 +23,7 @@ class DateTimeFactory
         return $this->fromDateTimePhp($datetimePhp, $timezone);
     }
 
-    public function fromTimestamp($timestamp, $timezone = self::TIMEZONE_GMT)
+    public function fromTimestamp(int $timestamp, string $timezone = self::TIMEZONE_GMT): DateTime
     {
         $timezonePhp = new DateTimeZone($timezone);
         $datetimePhp = new DateTimePhp('now', $timezonePhp);
@@ -38,64 +32,18 @@ class DateTimeFactory
         return $this->fromDateTimePhp($datetimePhp, $timezone);
     }
 
-    public function fromFormatDateTime($dateTimeString, $sourceTimezone = self::TIMEZONE_GMT)
-    {
-        return $this->fromFormat(self::FORMAT_DATETIME, $dateTimeString, $sourceTimezone);
-    }
-
-    public function fromFormatDate($dateString, $sourceTimezone = self::TIMEZONE_GMT)
-    {
-        return $this->fromFormat(self::FORMAT_DATE_ONLY, $dateString, $sourceTimezone)->getDate();
-    }
-
-    public function fromFormat($sourceFormat, $dateTimeString, $sourceTimezone = self::TIMEZONE_GMT)
-    {
-        $sourceTimezone = new DateTimeZone($sourceTimezone);
-        $dateTime = DateTimePhp::createFromFormat('!' . $sourceFormat, $dateTimeString, $sourceTimezone);
-
-        if (!$dateTime) {
-            throw new InvalidArgumentException($dateTimeString);
-        }
-
-        if ($dateTime->getTimezone()->getOffset($dateTime) !== $sourceTimezone->getOffset($dateTime)) {
-            throw new InvalidArgumentException('dateTime timezone do NOT match sourceTimezone');
-        }
-
-        $dateTime->setTimezone(new DateTimeZone($this->appTimezone));
-
-        return $this->fromDateTimePhp($dateTime, $this->appTimezone);
-    }
-
-    public function fromFormatWithTimezone($sourceFormat, $dateTimeString)
-    {
-        $dummyTimezoneName = 'Etc/Universal';
-        $dateTime = DateTimePhp::createFromFormat('!' . $sourceFormat, $dateTimeString, new DateTimeZone($dummyTimezoneName));
-
-        if (!$dateTime) {
-            throw new InvalidArgumentException($dateTimeString);
-        }
-
-        if ($dateTime->getTimezone()->getName() === $dummyTimezoneName) {
-            throw new \InvalidArgumentException('No timezone given in $dateTimeString');
-        }
-
-        $dateTime->setTimezone(new DateTimeZone($this->appTimezone));
-
-        return $this->fromDateTimePhp($dateTime, $this->appTimezone);
-    }
-
-    private function fromDateTimePhp(DateTimePhp $dateTimePhp, $timezone)
+    private function fromDateTimePhp(DateTimePhp $dateTimePhp, string $timezone = DateTimeFactory::TIMEZONE_GMT): DateTime
     {
         return new DateTime(
             new Date(
-                $dateTimePhp->format('Y'),
-                $dateTimePhp->format('m'),
-                $dateTimePhp->format('d')
+                (int) $dateTimePhp->format('Y'),
+                (int) $dateTimePhp->format('m'),
+                (int) $dateTimePhp->format('d')
             ),
             new Time(
-                $dateTimePhp->format('H'),
-                $dateTimePhp->format('i'),
-                $dateTimePhp->format('s')
+                (int) $dateTimePhp->format('H'),
+                (int) $dateTimePhp->format('i'),
+                (int) $dateTimePhp->format('s')
             ),
             $timezone
         );

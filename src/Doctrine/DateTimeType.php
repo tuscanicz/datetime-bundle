@@ -1,33 +1,53 @@
 <?php
 
-namespace Kutny\DateTimeBundle\Doctrine;
+declare(strict_types=1);
+
+namespace Tuscanicz\DateTimeBundle\Doctrine;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
-use Kutny\DateTimeBundle\Date\Date;
-use Kutny\DateTimeBundle\DateTime;
-use Kutny\DateTimeBundle\Time\Time;
+use Tuscanicz\DateTimeBundle\Date\Date;
+use Tuscanicz\DateTimeBundle\DateTime;
+use Tuscanicz\DateTimeBundle\Time\Time;
 
 class DateTimeType extends Type
 {
-    const KUTNY_DATETIME = 'kutnyDateTime';
+    const TUSCANICZ_DATETIME = 'tuscaniczDateTime';
 
+    /**
+     * @param array $fieldDeclaration
+     * @param AbstractPlatform $platform
+     * @return string
+     */
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
         return $platform->getDateTimeTypeDeclarationSQL($fieldDeclaration);
     }
 
+    /**
+     * @param DateTime $value
+     * @param AbstractPlatform $platform
+     * @return null
+     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         return ($value !== null) ? $value->toFormat($platform->getDateTimeFormatString()) : null;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
-        return self::KUTNY_DATETIME;
+        return self::TUSCANICZ_DATETIME;
     }
-    
+
+    /**
+     * @param mixed $value
+     * @param AbstractPlatform $platform
+     * @return mixed|DateTime
+     */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if ($value === null || $value instanceof \DateTime) {
@@ -35,8 +55,7 @@ class DateTimeType extends Type
         }
 
         $dateTime = date_create_from_format($platform->getDateTimeFormatString(), $value);
-
-        if (!$dateTime) {
+        if ($dateTime === false) {
             throw ConversionException::conversionFailedFormat($value, $this->getName(), $platform->getDateTimeFormatString());
         }
 
@@ -56,6 +75,9 @@ class DateTimeType extends Type
         );
     }
 
+    /**
+     * @return int
+     */
     public function getBindingType()
     {
         return \PDO::PARAM_STR;

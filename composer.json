@@ -1,12 +1,16 @@
 {
-    "name": "kutny/datetime-bundle",
+    "name": "tuscanicz/datetime-bundle",
     "type": "symfony-bundle",
-    "homepage": "https://github.com/kutny/datetime-bundle",
+    "homepage": "https://github.com/tuscanicz/datetime-bundle",
     "license": "MIT",
     "authors": [
         {
             "name": "Jiri Koutny",
             "email": "jirkakoutny@gmail.com"
+        },
+        {
+            "name": "Petr Bechyne",
+            "email": "mail@petrbechyne.com"
         }
     ],
     "require": {
@@ -16,11 +20,12 @@
         "symfony/http-kernel": "~3.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "~6.3"
+        "phpunit/phpunit": "~6.3",
+        "doctrine/orm": "^2.6"
     },
     "autoload": {
         "psr-4": {
-            "Kutny\\DateTimeBundle\\": "src/"
+            "Tuscanicz\\DateTimeBundle\\": "src/"
         }
     }
 }

@@ -1,32 +1,34 @@
 <?php
 
-namespace Kutny\DateTimeBundle\Date;
+declare(strict_types=1);
+
+namespace Tuscanicz\DateTimeBundle\Date;
 
 use PHPUnit\Framework\TestCase;
 
 class DateTest extends TestCase
 {
-    /** @test */
-    public function toTimestamp()
+    public function testToTimestamp(): void
     {
         $date = new Date(2017, 9, 28);
 
-        $this->assertSame(1506556800, $date->toTimestamp());
+        self::assertSame(1506556800, $date->toTimestamp());
     }
 
     /**
-     * @test
-     * @dataProvider getDaysFrom_dataProvider
+     * @param Date $startDate
+     * @param Date $endDate
+     * @param int $expectedDaysDifference
+     * @dataProvider getDaysFromDataProvider
      */
-    public function getDaysFrom(Date $startDate, Date $endDate, $expectedDaysDifference)
+    public function testGetDaysFrom(Date $startDate, Date $endDate, int $expectedDaysDifference): void
     {
         $daysFrom = $endDate->getDaysFrom($startDate);
 
-        $this->assertSame($expectedDaysDifference, $daysFrom);
+        self::assertSame($expectedDaysDifference, $daysFrom);
     }
 
-    /** @test */
-    public function addDays_withTimechange()
+    public function testAddDaysWithTimechange(): void
     {
         $dateTime = new Date(2010, 10, 31);
 
@@ -34,11 +36,10 @@ class DateTest extends TestCase
 
         $expectedNewDateTime = new Date(2010, 11, 1);
 
-        $this->assertEquals($expectedNewDateTime, $newDateTime);
+        self::assertEquals($expectedNewDateTime, $newDateTime);
     }
 
-    /** @test */
-    public function subDays()
+    public function testSubDays(): void
     {
         $dateTime = new Date(1987, 7, 31);
 
@@ -49,8 +50,18 @@ class DateTest extends TestCase
         $this->assertEquals($expectedNewDateTime, $newDateTime);
     }
 
-    /** @test */
-    public function addMonths()
+    public function testAddYears(): void
+    {
+        $dateTime = new Date(2014, 1, 31);
+
+        $newDateTime = $dateTime->addYears(4);
+
+        $expectedNewDateTime = new Date(2018, 1, 31);
+
+        self::assertEquals($expectedNewDateTime, $newDateTime);
+    }
+
+    public function testAddMonths(): void
     {
         $dateTime = new Date(2014, 1, 31);
 
@@ -58,11 +69,21 @@ class DateTest extends TestCase
 
         $expectedNewDateTime = new Date(2014, 3, 3);
 
-        $this->assertEquals($expectedNewDateTime, $newDateTime);
+        self::assertEquals($expectedNewDateTime, $newDateTime);
     }
 
-    /** @test */
-    public function subMonths()
+    public function testSubYears(): void
+    {
+        $dateTime = new Date(2010, 11, 1);
+
+        $newDateTime = $dateTime->subYears(5);
+
+        $expectedNewDateTime = new Date(2005, 11, 1);
+
+        self::assertEquals($expectedNewDateTime, $newDateTime);
+    }
+
+    public function testSubMonths(): void
     {
         $dateTime = new Date(2010, 11, 1);
 
@@ -70,16 +91,20 @@ class DateTest extends TestCase
 
         $expectedNewDateTime = new Date(2010, 6, 1);
 
-        $this->assertEquals($expectedNewDateTime, $newDateTime);
+        self::assertEquals($expectedNewDateTime, $newDateTime);
     }
 
-    public function getDaysFrom_dataProvider()
+    public function getDaysFromDataProvider(): array
     {
         return [
+            [new Date(2014, 1, 1), new Date(2014, 1, 1), 0],
+            [new Date(2014, 1, 1), new Date(2014, 1, 2), 1],
             [new Date(2014, 1, 11), new Date(2014, 1, 28), 17],
             [new Date(2014, 9, 20), new Date(2015, 1, 2), 104], // time change (summer time -> winter time) occured
+            [new Date(2015, 1, 2), new Date(2014, 9, 20), -104], // time change (wintertime -> summer time) occured
             [new Date(2014, 1, 28), new Date(2014, 1, 11), -17],
             [new Date(2016, 3, 26), new Date(2016, 3, 28), 2], // time change (winter time -> summer time) occured
+            [new Date(2016, 3, 28), new Date(2016, 3, 26), -2], // time change (summer time -> winter time) occured
             [new Date(2015, 1, 1), new Date(2016, 1, 1), 365],
             [new Date(2016, 1, 1), new Date(2017, 1, 1), 366],
         ];
