@@ -5,7 +5,7 @@ A strict implementation of Kutny DateTime bundle.
 
 # Contribute
 
-[![Build Status](https://travis-ci.org/tuscanicz/enum.svg?branch=master)](https://travis-ci.org/tuscanicz/datetime-bundle)
+[![Build Status](https://travis-ci.org/tuscanicz/datetime-bundle.svg?branch=master)](https://travis-ci.org/tuscanicz/datetime-bundle)
 
 Feel free to contribute!
 
