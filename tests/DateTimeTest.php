@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tuscanicz\DateTimeBundle;
 
+use DateTime as DateTimePhp;
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Tuscanicz\DateTimeBundle\Date\Date;
 use Tuscanicz\DateTimeBundle\Time\Time;
@@ -85,7 +87,7 @@ class DateTimeTest extends TestCase
      * @param bool $expectedResult
      * @dataProvider isBetweenProvider
      */
-    public function testIsBetween(DateTime $now, DateTime $start, DateTime $end, bool $expectedResult)
+    public function testIsBetween(DateTime $now, DateTime $start, DateTime $end, bool $expectedResult): void
     {
         self::assertSame($expectedResult, $now->isBetween($start, $end));
     }
@@ -104,7 +106,7 @@ class DateTimeTest extends TestCase
      * @param bool $expectedResult
      * @dataProvider isSameAsDataProvider
      */
-    public function testIsSameAs(DateTime $oneDateTime, DateTime $secondDateTime, bool $expectedResult)
+    public function testIsSameAs(DateTime $oneDateTime, DateTime $secondDateTime, bool $expectedResult): void
     {
         self::assertSame($expectedResult, $oneDateTime->isSameAs($secondDateTime));
     }
@@ -282,5 +284,31 @@ class DateTimeTest extends TestCase
         );
 
         self::assertEquals($expectedNewDateTime, $newDateTime);
+    }
+
+    public function testToDateTime(): void
+    {
+        $dateTime = new DateTime(
+            new Date(1987, 7, 31),
+            new Time(11, 19, 0)
+        );
+
+        $actualPhpDateTime = $dateTime->toDateTime();
+        $expectedNewDateTime = new DateTimePhp('1987-07-31 11:19:00');
+
+        self::assertEquals($expectedNewDateTime, $actualPhpDateTime);
+    }
+
+    public function testToDateTimeImmutable(): void
+    {
+        $dateTime = new DateTime(
+            new Date(1987, 7, 3),
+            new Time(11, 19, 3)
+        );
+
+        $actualPhpDateTime = $dateTime->toDateTimeImmutable();
+        $expectedNewDateTime = new DateTimeImmutable('1987-07-03 11:19:03');
+
+        self::assertEquals($expectedNewDateTime, $actualPhpDateTime);
     }
 }

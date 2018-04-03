@@ -6,6 +6,7 @@ namespace Tuscanicz\DateTimeBundle;
 
 use DateInterval;
 use DateTime as DateTimePhp;
+use DateTimeImmutable;
 use DateTimeZone;
 use Tuscanicz\DateTimeBundle\Date\Date;
 use Tuscanicz\DateTimeBundle\Time\Time;
@@ -51,6 +52,11 @@ class DateTime
     public function toDateTime(): DateTimePhp
     {
         return new DateTimePhp($this->toFormat('r'));
+    }
+
+    public function toDateTimeImmutable(): DateTimeImmutable
+    {
+        return DateTimeImmutable::createFromMutable($this->toDateTime());
     }
 
     public function isBetween(DateTime $start, DateTime $end): bool

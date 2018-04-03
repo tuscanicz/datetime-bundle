@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tuscanicz\DateTimeBundle;
 
 use DateTime as DateTimePhp;
+use DateTimeInterface;
 use DateTimeZone;
 use Tuscanicz\DateTimeBundle\Date\Date;
 use Tuscanicz\DateTimeBundle\Time\Time;
@@ -20,7 +21,7 @@ class DateTimeFactory
         $timezonePhp = new DateTimeZone($timezone);
         $datetimePhp = new DateTimePhp('now', $timezonePhp);
 
-        return $this->fromDateTimePhp($datetimePhp, $timezone);
+        return $this->fromDateTimeInterface($datetimePhp, $timezone);
     }
 
     public function fromTimestamp(int $timestamp, string $timezone = self::TIMEZONE_GMT): DateTime
@@ -29,10 +30,10 @@ class DateTimeFactory
         $datetimePhp = new DateTimePhp('now', $timezonePhp);
         $datetimePhp->setTimestamp($timestamp);
 
-        return $this->fromDateTimePhp($datetimePhp, $timezone);
+        return $this->fromDateTimeInterface($datetimePhp, $timezone);
     }
 
-    private function fromDateTimePhp(DateTimePhp $dateTimePhp, string $timezone = DateTimeFactory::TIMEZONE_GMT): DateTime
+    public function fromDateTimeInterface(DateTimeInterface $dateTimePhp, string $timezone = DateTimeFactory::TIMEZONE_GMT): DateTime
     {
         return new DateTime(
             new Date(
