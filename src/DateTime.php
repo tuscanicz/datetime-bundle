@@ -66,6 +66,11 @@ class DateTime
         return $thisDateTime < $end->toDateTime() ? $thisDateTime > $start->toDateTime() : false;
     }
 
+    public function addYears(int $years): DateTime
+    {
+        return $this->addIntervalBySpec('P' . (string) $years . 'Y');
+    }
+
     public function addMonths(int $months): DateTime
     {
         return $this->addIntervalBySpec('P' . (string) $months . 'M');
@@ -107,6 +112,11 @@ class DateTime
         }
 
         return $this->fromDateTimePhp($thisDateTime);
+    }
+
+    public function subYears(int $years): DateTime
+    {
+        return $this->subIntervalBySpec('P' . (string) $years . 'Y');
     }
 
     public function subMonths(int $months): DateTime

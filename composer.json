@@ -27,5 +27,8 @@
         "psr-4": {
             "Tuscanicz\\DateTimeBundle\\": "src/"
         }
+    },
+    "scripts": {
+        "tests": "vendor/phpunit/phpunit/phpunit"
     }
 }

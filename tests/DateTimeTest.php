@@ -150,6 +150,23 @@ class DateTimeTest extends TestCase
         ];
     }
 
+    public function testSubYears(): void
+    {
+        $dateTime = new DateTime(
+            new Date(1987, 7, 31),
+            new Time(11, 19, 0)
+        );
+
+        $newDateTime = $dateTime->subYears(15);
+
+        $expectedNewDateTime = new DateTime(
+            new Date(1972, 7, 31),
+            new Time(11, 19, 0)
+        );
+
+        self::assertEquals($expectedNewDateTime, $newDateTime);
+    }
+
     public function testSubDays(): void
     {
         $dateTime = new DateTime(
@@ -246,6 +263,23 @@ class DateTimeTest extends TestCase
 
         $expectedNewDateTime = new DateTime(
             new Date(1988, 5, 31),
+            new Time(11, 19, 0)
+        );
+
+        self::assertEquals($expectedNewDateTime, $newDateTime);
+    }
+
+    public function testAddYears(): void
+    {
+        $dateTime = new DateTime(
+            new Date(1987, 7, 31),
+            new Time(11, 19, 0)
+        );
+
+        $newDateTime = $dateTime->addYears(15);
+
+        $expectedNewDateTime = new DateTime(
+            new Date(2002, 7, 31),
             new Time(11, 19, 0)
         );
 
