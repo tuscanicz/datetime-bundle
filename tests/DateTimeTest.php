@@ -12,6 +12,11 @@ use Tuscanicz\DateTimeBundle\Time\Time;
 
 class DateTimeTest extends TestCase
 {
+    const EXPECT_IS_AFTER = true;
+    const EXPECT_IS_NOT_AFTER = false;
+    const EXPECT_IS_BEFORE = true;
+    const EXPECT_IS_NOT_BEFORE = false;
+
     public function testGetters(): void
     {
         $dateTime = new DateTime(
@@ -344,5 +349,187 @@ class DateTimeTest extends TestCase
         $expectedNewDateTime = new DateTimeImmutable('1987-07-03 11:19:03');
 
         self::assertEquals($expectedNewDateTime, $actualPhpDateTime);
+    }
+
+	/**
+	 * @param DateTime $dateTimeA
+	 * @param DateTime $dateTimeB
+	 * @param bool $expectedResult
+	 * @dataProvider isAfterProvider
+	 */
+    public function testIsAfter(DateTime $dateTimeA, DateTime $dateTimeB, bool $expectedResult): void
+    {
+        self::assertSame($expectedResult, $dateTimeA->isAfter($dateTimeB));
+    }
+
+    public function isAfterProvider(): array
+    {
+        return [
+            [
+                new DateTime(
+                    new Date(2018, 11, 13),
+                    new Time(12, 0, 0)
+                ),
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_NOT_AFTER,
+            ],
+            [
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(11, 0, 0)
+                ),
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_NOT_AFTER,
+            ],
+            [
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(13, 0, 0)
+                ),
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_AFTER,
+            ],
+            [
+                new DateTime(
+                    new Date(2018, 11, 15),
+                    new Time(12, 0, 0)
+                ),
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_AFTER,
+            ],
+            [
+                new DateTime(
+                    new Date(2018, 1, 1),
+                    new Time(12, 0, 0)
+                ),
+                new DateTime(
+                    new Date(500, 1, 1),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_AFTER,
+            ],
+            [
+                new DateTime(
+                    new Date(500, 1, 1),
+                    new Time(12, 0, 0)
+                ),
+                new DateTime(
+                    new Date(2018, 1, 1),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_NOT_AFTER,
+            ],
+        ];
+    }
+
+	/**
+	 * @param DateTime $dateTimeA
+	 * @param DateTime $dateTimeB
+	 * @param bool $expectedResult
+	 * @dataProvider isBeforeProvider
+	 */
+    public function testIsBefore(DateTime $dateTimeA, DateTime $dateTimeB, bool $expectedResult): void
+    {
+        self::assertSame($expectedResult, $dateTimeA->isBefore($dateTimeB));
+    }
+
+    public function isBeforeProvider(): array
+    {
+        return [
+            [
+                new DateTime(
+                    new Date(2018, 11, 13),
+                    new Time(12, 0, 0)
+                ),
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_BEFORE,
+            ],
+            [
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(11, 0, 0)
+                ),
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_BEFORE,
+            ],
+            [
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(13, 0, 0)
+                ),
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_NOT_BEFORE,
+            ],
+            [
+                new DateTime(
+                    new Date(2018, 11, 15),
+                    new Time(12, 0, 0)
+                ),
+                new DateTime(
+                    new Date(2018, 11, 14),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_NOT_BEFORE,
+            ],
+            [
+                new DateTime(
+                    new Date(2018, 1, 1),
+                    new Time(12, 0, 0)
+                ),
+                new DateTime(
+                    new Date(500, 1, 1),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_NOT_BEFORE,
+            ],
+            [
+                new DateTime(
+                    new Date(500, 1, 1),
+                    new Time(12, 0, 0)
+                ),
+                new DateTime(
+                    new Date(2018, 1, 1),
+                    new Time(12, 0, 0)
+                ),
+                self::EXPECT_IS_BEFORE,
+            ],
+        ];
+    }
+
+    public function testEqualDatesAreNotAfterNorBefore(): void
+    {
+        $dateA = new DateTime(
+            new Date(2018, 1, 1),
+            new Time(12, 0, 0)
+        );
+
+        $dateB = new DateTime(
+            new Date(2018, 1, 1),
+            new Time(12, 0, 0)
+        );
+
+        self::assertEquals(self::EXPECT_IS_NOT_BEFORE, $dateA->isBefore($dateB));
+        self::assertEquals(self::EXPECT_IS_NOT_AFTER, $dateA->isAfter($dateB));
     }
 }
