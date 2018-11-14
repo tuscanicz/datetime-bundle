@@ -139,6 +139,26 @@ class DateTime
         return $this->subIntervalBySpec('PT' . (string) $minutes . 'M');
     }
 
+    public function isAfter(DateTime $dateTime): bool
+    {
+        $currentTimestamp = $this->toTimestamp();
+        $dateTimeTimestamp = $dateTime->toTimestamp();
+
+        $diffInSeconds = $currentTimestamp - $dateTimeTimestamp;
+
+        return $diffInSeconds > 0;
+    }
+
+    public function isBefore(DateTime $dateTime): bool
+    {
+        $currentTimestamp = $this->toTimestamp();
+        $dateTimeTimestamp = $dateTime->toTimestamp();
+
+        $diffInSeconds = $dateTimeTimestamp - $currentTimestamp;
+
+        return $diffInSeconds > 0;
+    }
+
     private function subIntervalBySpec(string $intervalSpec): DateTime
     {
         $thisDateTime = $this->toDateTime();
