@@ -28,6 +28,19 @@ class DateTest extends TestCase
         self::assertSame($expectedDaysDifference, $daysFrom);
     }
 
+    /**
+     * @param \Tuscanicz\DateTimeBundle\Date\Date $date
+     * @param \Tuscanicz\DateTimeBundle\Date\Date $expectedDate
+     * @dataProvider firstDayOfMonthDataProvider
+     */
+    public function testFirstDayOfMonth(Date $date, Date $expectedDate): void
+    {
+        self::assertEquals(
+            $date->firstDayOfMonth(),
+            $expectedDate
+        );
+    }
+
     public function testAddDaysWithTimechange(): void
     {
         $dateTime = new Date(2010, 10, 31);
@@ -107,6 +120,14 @@ class DateTest extends TestCase
             [new Date(2016, 3, 28), new Date(2016, 3, 26), -2], // time change (summer time -> winter time) occured
             [new Date(2015, 1, 1), new Date(2016, 1, 1), 365],
             [new Date(2016, 1, 1), new Date(2017, 1, 1), 366],
+        ];
+    }
+
+    public function firstDayOfMonthDataProvider(): array
+    {
+        return [
+            [new Date(2014, 1, 1), new Date(2014, 1, 1)],
+            [new Date(2014, 12, 31), new Date(2014, 12, 1)],
         ];
     }
 }

@@ -149,6 +149,11 @@ class Date
         return -$days;
     }
 
+    public function firstDayOfMonth(): Date
+    {
+        return new Date($this->year, $this->month, 1);
+    }
+
     private function addIntervalBySpec(string $intervalSpec): Date
     {
         $thisDateTime = $this->toDateTime();
