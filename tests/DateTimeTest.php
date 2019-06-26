@@ -8,6 +8,7 @@ use DateTime as DateTimePhp;
 use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use Tuscanicz\DateTimeBundle\Date\Date;
+use Tuscanicz\DateTimeBundle\Date\Day\DayEnum;
 use Tuscanicz\DateTimeBundle\Time\Time;
 
 class DateTimeTest extends TestCase
@@ -24,7 +25,9 @@ class DateTimeTest extends TestCase
             new Time(11, 19, 59)
         );
 
-        self::assertSame(Date::DAY_FRIDAY, $dateTime->getDate()->getDayOfWeek());
+        self::assertSame(DayEnum::DAY_FRIDAY, $dateTime->getDate()->getDayOfWeek()->getValue());
+        self::assertFalse($dateTime->getDate()->isWeekend());
+        self::assertTrue($dateTime->getDate()->isWorkingDay());
         self::assertSame(31, $dateTime->getDate()->getWeek());
         self::assertSame(1987, $dateTime->getDate()->getYear());
         self::assertSame(7, $dateTime->getDate()->getMonth());
@@ -32,6 +35,19 @@ class DateTimeTest extends TestCase
         self::assertSame(11, $dateTime->getTime()->getHour());
         self::assertSame(19, $dateTime->getTime()->getMinute());
         self::assertSame(59, $dateTime->getTime()->getSecond());
+    }
+
+    public function testGettersWithWeekend(): void
+    {
+        $dateTime = new DateTime(
+            new Date(1987, 7, 26),
+            new Time(14, 55, 00)
+        );
+
+        self::assertInstanceOf(DayEnum::class, $dateTime->getDate()->getDayOfWeek());
+        self::assertSame(DayEnum::DAY_SUNDAY, $dateTime->getDate()->getDayOfWeek()->getValue());
+        self::assertTrue($dateTime->getDate()->isWeekend());
+        self::assertFalse($dateTime->getDate()->isWorkingDay());
     }
 
     public function testToFormat(): void

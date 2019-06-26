@@ -6,17 +6,10 @@ namespace Tuscanicz\DateTimeBundle\Date;
 
 use DateTime as DateTimePhp;
 use DateInterval as DateIntervalPhp;
+use Tuscanicz\DateTimeBundle\Date\Day\DayEnum;
 
 class Date
 {
-    const DAY_MONDAY = 1;
-    const DAY_TUESDAY = 2;
-    const DAY_WEDNESDAY = 3;
-    const DAY_THURSDAY = 4;
-    const DAY_FRIDAY = 5;
-    const DAY_SATURDAY = 6;
-    const DAY_SUNDAY = 7;
-
     private $year;
     private $month;
     private $day;
@@ -63,9 +56,24 @@ class Date
         return $stringFormat;
     }
 
-    public function getDayOfWeek(): int
+    public function isWeekend(): bool
     {
-        return (int) $this->toFormat('N');
+        return $this->getDayOfWeek()->in([DayEnum::DAY_SUNDAY, DayEnum::DAY_SATURDAY]) === true;
+    }
+
+    public function isWorkingDay(): bool
+    {
+        return $this->isWeekend() === false;
+    }
+
+    public function getDayOfWeek(): DayEnum
+    {
+        $dayOfWeek = (int) $this->toFormat('N');
+        if (DayEnum::hasValue($dayOfWeek) === true) {
+            return new DayEnum($dayOfWeek);
+        }
+
+        throw new \InvalidArgumentException('Could not get day of week, invalid value given: ' . $dayOfWeek);
     }
 
     public function getWeek(): int

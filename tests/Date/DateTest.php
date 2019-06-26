@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tuscanicz\DateTimeBundle\Date;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Tuscanicz\DateTimeBundle\Date\Day\DayEnum;
 
 class DateTest extends TestCase
 {
@@ -105,6 +107,18 @@ class DateTest extends TestCase
         $expectedNewDateTime = new Date(2010, 6, 1);
 
         self::assertEquals($expectedNewDateTime, $newDateTime);
+    }
+
+    public function testGetDayOfWeekWillFailOnUnresolvedDayNumber(): void
+    {
+        /** @var Date|MockObject $dateMock */
+        $dateMock = $this->getMockBuilder(Date::class)->disableOriginalConstructor()->setMethodsExcept(['getDayOfWeek'])->getMock();
+        $dateMock->method('toFormat')->willReturn(99);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not get day of week, invalid value given: 99');
+
+        $dateMock->getDayOfWeek();
     }
 
     public function getDaysFromDataProvider(): array
