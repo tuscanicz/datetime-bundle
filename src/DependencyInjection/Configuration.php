@@ -19,8 +19,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('tuscanicz_datetime');
+        $treeBuilder = new TreeBuilder('tuscanicz_datetime');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
