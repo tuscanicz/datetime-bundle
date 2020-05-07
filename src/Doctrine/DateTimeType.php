@@ -82,4 +82,13 @@ class DateTimeType extends Type
     {
         return \PDO::PARAM_STR;
     }
+
+    /**
+     * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
+     * @return bool
+     */
+    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    {
+        return true;
+    }
 }
